@@ -37,7 +37,8 @@ model Contest {
 model Problem {
   id         String  @id @default(cuid())
   question   String
-  testcases  String
+  testcases  String[]
+  result     String[]
   contestId  String
   contest    Contest @relation(name: "contest-problem", fields: [contestId], references: [id])
 }
