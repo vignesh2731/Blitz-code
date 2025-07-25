@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id                   String   @id @default(cuid())
+  email                String   @unique
+  password             String
+  name                 String
+  createdContests      Contest[] @relation(name: "user-created-constest")
+  contestsWon          Contest[] @relation(name: "contests-won")
+  contestsParticipated Contest[] @relation(name: "pariticipated-users")
+}
+
+model Contest {
+  id                 String   @id @default(cuid())
+  code               String   @unique
+  password           String
+  createdBy          String
+  createdUser        User     @relation(name: "user-created-constest", fields: [createdBy], references: [id])
+  winner             String
+  winnerUser         User     @relation(name: "contests-won", fields: [winner], references: [id])
+  participatedUsers  User[]   @relation(name: "pariticipated-users")
+  problem            Problem[] @relation(name: "contest-problem")
+}
+
+model Problem {
+  id         String  @id @default(cuid())
+  question   String
+  testcases  String
+  contestId  String
+  contest    Contest @relation(name: "contest-problem", fields: [contestId], references: [id])
+}
