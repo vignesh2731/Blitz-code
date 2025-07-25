@@ -1,9 +1,12 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+"use client"
+import { useSession } from "next-auth/react"
 import {Test} from '@repo/ui/Test'
+import { redirect } from "next/navigation";
 
 export default function Home() {
+  const session=useSession();
+  console.log(session);
+  if(!session.data)redirect('/api/auth/signin')
   return (
     <Test/>
   );
