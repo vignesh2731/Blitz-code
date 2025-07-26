@@ -1,4 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import prisma from '@repo/db/client';
 export const authOption={
     providers:[
@@ -18,6 +19,10 @@ export const authOption={
                 if(!user)return null;
                 return user;
             },
+        }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID || "",
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || ""
         })
     ],
     callbacks:{
