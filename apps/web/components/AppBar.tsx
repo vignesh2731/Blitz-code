@@ -3,24 +3,31 @@ import { motion } from "framer-motion";
 import {Button} from '@repo/ui/button'
 import { signIn, signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { useState } from "react";
+import { SideBar } from "./SideBar";
 export function AppBar()
 {
+    const [sidebar,setSideBar]=useState(false);
     const session=useSession();
     return (
          <motion.div
-      className="w-full bg-slate-200 h-20  flex flex-col justify-center px-10 shadow-md"
+      className="fixed top-0 z-50 w-full bg-slate-200 h-20  flex flex-col justify-center px-10 shadow-md"
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
         <div className="flex justify-between items-center">
             <div className="flex gap-10">
-                <div className="">
+                <div className="cursor-pointer hover:bg-white rounded-full" onClick={()=>{
+                    setSideBar(t=>!t);
+                }} >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                     </svg>
                 </div>
-                <div className="text-2xl font-bold font-serif text-blue-900">
+                <div className="text-2xl font-bold font-serif text-blue-900 cursor-pointer" onClick={()=>{
+                    redirect('/')
+                }}>
                     Blitz Code
                 </div>
             </div>
@@ -39,6 +46,9 @@ export function AppBar()
                 </div>
             </div>
         </div>
+        {sidebar && <div className="absolute top-20 left-0">
+                    <SideBar/>
+        </div>}
     </motion.div>
     )
 }
