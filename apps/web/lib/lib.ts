@@ -110,3 +110,16 @@ export async function updateUserData(credentials:{email?:string,password?:string
     })
     return {msg:"Credentials updated"};
 }
+export async function getUserData()
+{
+    const session=await getServerSession(authOption);
+    const data=await prisma.user.findFirst({
+        where:{
+            id:session?.user?.id
+        },
+        omit:{
+            password:true
+        }
+    })
+    return data;
+}
