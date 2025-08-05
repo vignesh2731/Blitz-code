@@ -28,8 +28,8 @@ model Contest {
   password           String
   createdBy          String
   createdUser        User     @relation(name: "user-created-constest", fields: [createdBy], references: [id])
-  winner             String
-  winnerUser         User     @relation(name: "contests-won", fields: [winner], references: [id])
+  winner             String?
+  winnerUser         User?     @relation(name: "contests-won", fields: [winner], references: [id])
   participatedUsers  User[]   @relation(name: "pariticipated-users")
   problem            Problem[] @relation(name: "contest-problem")
 }

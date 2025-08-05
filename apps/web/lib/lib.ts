@@ -123,3 +123,41 @@ export async function getUserData()
     })
     return data;
 }
+
+export async function createContest(code:string,password:string,title:string,question:string,testcases:string[],answers:string[])
+{
+    const session=await getServerSession(authOption);
+    const alreadyExists=await prisma.contest.findFirst({
+        where:{
+            code:code
+        }
+    })
+    if(alreadyExists)return {msg:"Contest code already exists"};
+    const contest=await prisma.contest.create({
+        data:{
+            code:code,
+            password:password,
+            createdBy:session?.user?.id,
+        }
+    })
+    const problem=await prisma.problem.create({
+        data:{
+            question:question,
+            testcases:testcases,
+            result:answers,
+            contestId:contest.id
+        }
+    })
+    await prisma.contest.update({
+        where:{
+            id:contest.id
+        },
+        data:{
+            problem:{
+                connect:[{id:problem.id}]
+            }
+        }
+    })
+    
+    return {msg:"Contest created"};
+}
