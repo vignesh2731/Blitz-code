@@ -161,3 +161,27 @@ export async function createContest(code:string,password:string,title:string,que
     
     return {msg:"Contest created"};
 }
+
+
+export async function joinContest(code:string,password:string)
+{
+    const session=await getServerSession(authOption);
+    const res=await prisma.contest.findFirst({
+        where:{
+            code:code,
+            password:password
+        }
+    })
+    if(!res)return{msg:"Incorrect credentials"};
+    await prisma.contest.update({
+        where:{
+            code:code
+        },
+        data:{
+            participatedUsers:{
+                connect:[{id:session.user.id}]
+            }
+        }
+    })
+    return {msg:"User has joined the contest"};
+}
