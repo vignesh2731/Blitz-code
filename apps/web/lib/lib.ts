@@ -185,3 +185,39 @@ export async function joinContest(code:string,password:string)
     })
     return {msg:"User has joined the contest"};
 }
+export async function getParticipants(code:string)
+{
+    const contest=await prisma.contest.findFirst({
+        where:{
+            code
+        }
+    })
+    if(!contest)return {msg:"Contest not found"};
+
+    const p=await prisma.contest.findFirst({
+        where:{
+            code:code
+        },
+        select:{
+            participatedUsers:{
+                select:{
+                    name:true
+                }
+            }
+        }
+    })
+    return {msg:"Contest found",participants:p?.participatedUsers}
+}
+
+export default async function ContestOwner(code:string)
+{
+    const session=await getServerSession(authOption);
+    const owner=await prisma.contest.findFirst({
+        where:{code},
+        select:{
+            createdBy:true
+        }
+    })
+    if(session.user.id===owner?.createdBy)return true;
+    return false;
+}
