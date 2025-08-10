@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import ParticipantsBox from "../../../components/ParticipantsBox";
-import ContestOwner, { getParticipants } from "../../../lib/lib";
+import ContestOwner, { getParticipants, leaveContest } from "../../../lib/lib";
 import { notFound, useRouter } from "next/navigation";
 import { Button } from "@repo/ui/button";
 
@@ -27,6 +27,9 @@ export default function ContestStartPage({params}:{params:Promise<{code:string}>
         {isContestCreator && <div className="flex justify-center">
                 <Button label="Start Contest" onClick={()=>{
                     
+                }}/>
+                <Button label="Leave Contest" onClick={async()=>{
+                    await leaveContest(code);
                 }}/>
             </div>}
         <div className="grid grid-cols-4 mt-10 ml-24 gap-10">

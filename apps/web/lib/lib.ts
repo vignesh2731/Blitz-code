@@ -254,3 +254,21 @@ export async function fetchContestData(){
     })
     return {res};
 }
+export async function leaveContest(code:string)
+{
+    const session=await getServerSession(authOption);
+    if(!session || !session.user)return ;
+    const res= await prisma.contest.update({
+        where:{
+            code:code
+        },
+        data:{
+            participatedUsers:{
+                disconnect:{
+                    id:session.user.id
+                }
+            }
+        }
+    })
+    return;
+}
