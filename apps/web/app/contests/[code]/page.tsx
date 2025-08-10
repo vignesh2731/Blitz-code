@@ -24,14 +24,19 @@ export default function ContestStartPage({params}:{params:Promise<{code:string}>
         fetchParticipants();
     },[])
     return <div className="flex flex-col mt-10">
-        {isContestCreator && <div className="flex justify-center">
+        <div className="flex justify-center">
+        {isContestCreator && <div>
                 <Button label="Start Contest" onClick={()=>{
                     
                 }}/>
-                <Button label="Leave Contest" onClick={async()=>{
-                    await leaveContest(code);
-                }}/>
+                
             </div>}
+            <Button label="Leave Contest" onClick={async()=>{
+                    await leaveContest(code);
+                    router.back();
+
+                }}/>
+            </div>
         <div className="grid grid-cols-4 mt-10 ml-24 gap-10">
             {participants.map((p,key)=>(
                 <ParticipantsBox name={p.name} key={key} />
