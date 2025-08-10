@@ -221,3 +221,36 @@ export default async function ContestOwner(code:string)
     if(session.user.id===owner?.createdBy)return true;
     return false;
 }
+
+export async function fetchContestData(){
+    const session=await getServerSession(authOption);
+    if(!session || !session.user)return;
+    const res=await prisma.user.findFirst({
+        where:{
+            id:session.user.id
+        },
+        select:{
+            contestsParticipated:{
+                select:{
+                    code:true,
+                    winnerUser:{
+                        select:{
+                            name:true
+                        }
+                    }
+                }
+            },
+            createdContests:{
+                select:{
+                    code:true,
+                    winnerUser:{
+                        select:{
+                            name:true
+                        }
+                    }
+                }
+            }
+        }
+    })
+    return {res};
+}
