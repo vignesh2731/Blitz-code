@@ -272,3 +272,27 @@ export async function leaveContest(code:string)
     })
     return;
 }
+
+export async function fetchQuestion(code:string)
+{
+    const contest=await prisma.contest.findFirst({
+        where:{
+            code:code
+        }
+    })
+    if(!contest)return {msg:"Contest not found"};
+    const res=await prisma.contest.findFirst({
+        where:{
+            code:code
+        },
+        select:{
+            problem:{
+                select:{
+                    question:true,
+                    title:true
+                },
+            }
+        }
+    })  
+    return {res}
+}

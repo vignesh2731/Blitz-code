@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import ParticipantsBox from "../../../components/ParticipantsBox";
 import ContestOwner, { getParticipants, leaveContest } from "../../../lib/lib";
-import { notFound, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "@repo/ui/button";
 
 export default function ContestStartPage({params}:{params:Promise<{code:string}>})

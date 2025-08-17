@@ -36,6 +36,7 @@ model Contest {
 
 model Problem {
   id         String  @id @default(cuid())
+  title      String @default("")
   question   String
   testcases  String[]
   result     String[]
