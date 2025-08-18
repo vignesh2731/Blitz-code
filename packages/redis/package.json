@@ -1,0 +1,19 @@
+{
+  "name": "@repo/redis",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports":{
+    "client":"./src/redis.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/redis": "^4.0.11",
+    "redis": "^5.8.1"
+  }
+}
