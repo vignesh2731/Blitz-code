@@ -32,6 +32,7 @@ model Contest {
   winnerUser         User?     @relation(name: "contests-won", fields: [winner], references: [id])
   participatedUsers  User[]   @relation(name: "pariticipated-users")
   problem            Problem[] @relation(name: "contest-problem")
+  contestFinished    Boolean @default(false)
 }
 
 model Problem {

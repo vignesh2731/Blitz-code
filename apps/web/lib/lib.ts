@@ -203,10 +203,11 @@ export async function getParticipants(code:string)
                 select:{
                     name:true
                 }
-            }
+            },
+            contestFinished:true
         }
     })
-    return {msg:"Contest found",participants:p?.participatedUsers}
+    return {msg:"Contest found",participants:p?.participatedUsers,contestEnded:p?.contestFinished}
 }
 
 export default async function ContestOwner(code:string)
@@ -295,4 +296,12 @@ export async function fetchQuestion(code:string)
         }
     })  
     return {res}
+}
+
+export async function codeSubmit(code:string,userCode:string,language:string)
+{
+    const session=await getServerSession(authOption);
+    // push the code to a redis queue and a vm picks it from the queue executes it and cross checks the testcases
+    console.log(userCode);
+    return {msg:"Submitted"};
 }

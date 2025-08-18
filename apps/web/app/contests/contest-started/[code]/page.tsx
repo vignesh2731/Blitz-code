@@ -1,7 +1,7 @@
 "use client"
 
 import { use, useEffect, useState } from "react"
-import { fetchQuestion, leaveContest } from "../../../../lib/lib";
+import { codeSubmit, fetchQuestion, leaveContest } from "../../../../lib/lib";
 import { Button } from "@repo/ui/button";
 
 export default function ContestStarted({params}:{params:Promise<{code:string}>})
@@ -10,6 +10,7 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
     const [question,setQuestion]=useState("");
     const [title,setTitle]=useState("");
     const [language,setLanguage]=useState("C++");
+    const[userCode,setUserCode]=useState("");
     useEffect(()=>{
         async function main()
         {
@@ -35,8 +36,8 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
                     <option>JavaScript</option>
                 </select>
             </div>
-            <Button label="Submit" onClick={()=>{
-
+            <Button label="Submit" onClick={async()=>{
+                await codeSubmit(code,userCode,language);
             }}/>
             <Button label="Leave contest" onClick={async()=>{
                 await leaveContest(code);
@@ -51,7 +52,9 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
                         <p className="flex-nowrap">{"fasdfjasdfkljsad sa fsdfjas;dfl asdf asdkhf ldsfasd faskd jadksflahsd flhasdophasdfiuhasdfkjasdkflds fasdkflaskjfaskjdaskdhasdkfhdsakjflaskdflasd   sdflhdkjsfa sdfaiusdf lkdsf h akdjslasodifasodiuhasdifauhdfoisdhaskdflkdsfasiodu asdiu asd ifasdio fhasdiu hasidohasoidaosidasdiosda fdsa fasid fasdi fasdif hasodfasiufhasdf hasdofhasdifhasdkflhaswerfweoifhasdiuhadsds   asd fhasdiuf asoid uasiudf aioswu dsaiuf hadsiuf asiudfg sdf asdiuasodi uasudif"}</p>
                     </div>
                 </div>
-                <textarea id="message" rows={4} className="block p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-none" placeholder="Start writing your code from here"></textarea>
+                <textarea id="message" rows={4} className="block p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-none" placeholder="Start writing your code from here" onChange={(e)=>{
+                    setUserCode(e.target.value)
+                }}></textarea>
         </div>  
     </div>
 }
