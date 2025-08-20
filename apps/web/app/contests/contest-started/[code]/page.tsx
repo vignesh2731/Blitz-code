@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react"
 import { codeSubmit, fetchQuestion, leaveContest } from "../../../../lib/lib";
 import { Button } from "@repo/ui/button";
-
+import { motion } from "framer-motion";
 export default function ContestStarted({params}:{params:Promise<{code:string}>})
 {
     const {code}=use(params);
@@ -11,6 +11,13 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
     const [title,setTitle]=useState("");
     const [language,setLanguage]=useState("C++");
     const[userCode,setUserCode]=useState("");
+    enum CodeStatus{
+        Accepted="Accepted",
+        Wrong="Wrong",
+        Waiting="Waiting",
+        None="None"
+    }
+    const [codeStatus,setCodeStatus]=useState<CodeStatus>(CodeStatus.None);
     useEffect(()=>{
         async function main()
         {
@@ -38,6 +45,7 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
             </div>
             <Button label="Submit" onClick={async()=>{
                 await codeSubmit(code,userCode,language);
+                setCodeStatus(CodeStatus.Waiting);
             }}/>
             <Button label="Leave contest" onClick={async()=>{
                 await leaveContest(code);
@@ -46,15 +54,33 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
         <div className="min-h-screen mx-10 grid grid-cols-2 gap-10">
                 <div className="bg-slate-100 flex flex-col gap-10 px-10 py-10 rounded-lg border-4 border-black">
                     <div className="text-4xl font-bold w-full flex justify-center">
-                        {"Two sum"}
+                        {title}
                     </div>
                     <div>
-                        <p className="flex-nowrap">{"fasdfjasdfkljsad sa fsdfjas;dfl asdf asdkhf ldsfasd faskd jadksflahsd flhasdophasdfiuhasdfkjasdkflds fasdkflaskjfaskjdaskdhasdkfhdsakjflaskdflasd   sdflhdkjsfa sdfaiusdf lkdsf h akdjslasodifasodiuhasdifauhdfoisdhaskdflkdsfasiodu asdiu asd ifasdio fhasdiu hasidohasoidaosidasdiosda fdsa fasid fasdi fasdif hasodfasiufhasdf hasdofhasdifhasdkflhaswerfweoifhasdiuhadsds   asd fhasdiuf asoid uasiudf aioswu dsaiuf hadsiuf asiudfg sdf asdiuasodi uasudif"}</p>
+                        <p className="flex-nowrap">{question}</p>
                     </div>
                 </div>
                 <textarea id="message" rows={4} className="block p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-none" placeholder="Start writing your code from here" onChange={(e)=>{
                     setUserCode(e.target.value)
                 }}></textarea>
+                {codeStatus!==CodeStatus.None && <motion.div
+                    initial={{ y: 200, opacity: 0 }}   
+                    animate={{ y: 0, opacity: 1 }}   
+                    transition={{ duration: 0.8, ease: "easeOut" }} 
+                    className="fixed bottom-4 right-14 w-[750px] h-[200px] bg-gray-500 rounded-xl shadow-xl items-center justify-center text-white text-xl font-bold"
+                    >
+                        <div className="flex justify-end pt-3 pr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={()=>{
+                                setCodeStatus(CodeStatus.None)
+                            }}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                        
+                        <div className="h-full flex flex-col justify-center items-center pb-14">
+                            {codeStatus}
+                        </div>
+                </motion.div>}
         </div>  
     </div>
 }
