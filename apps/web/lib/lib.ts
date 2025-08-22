@@ -201,7 +201,8 @@ export async function getParticipants(code:string)
         select:{
             participatedUsers:{
                 select:{
-                    name:true
+                    name:true,
+                    email:true
                 }
             },
             contestFinished:true

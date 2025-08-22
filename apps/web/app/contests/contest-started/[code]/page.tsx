@@ -1,9 +1,10 @@
 "use client"
 
 import { use, useEffect, useState } from "react"
-import { codeSubmit, fetchQuestion, leaveContest } from "../../../../lib/lib";
+import { codeSubmit, fetchQuestion, getParticipants, leaveContest } from "../../../../lib/lib";
 import { Button } from "@repo/ui/button";
 import { motion } from "framer-motion";
+import { redirect } from "next/navigation";
 export default function ContestStarted({params}:{params:Promise<{code:string}>})
 {
     const {code}=use(params);
@@ -11,6 +12,8 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
     const [title,setTitle]=useState("");
     const [language,setLanguage]=useState("C++");
     const[userCode,setUserCode]=useState("");
+    const[showParticipants,setShowParticipants]=useState(false);
+    const [participants,setPariticipants]=useState<{name:string}[] | null>([]);
     enum CodeStatus{
         Accepted="Accepted",
         Wrong="Wrong",
@@ -26,12 +29,17 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
             const title=response.res?.problem[0]?.title;
             setQuestion(question || "");
             setTitle(title || "");
+            const res=await getParticipants(code);
+            setPariticipants(res?.participants || null);
         }
         main();
     },[])
 
-    return <div className="mt-6 mb-10">
-        <div className="flex justify-end items-center mb-5 pr-20 gap-16">
+    return <div className="mt-6 mb-10 h-screen w-screen sticky">
+        <div className="flex justify-end items-center mb-5 pr-16 gap-16 w-full">
+            <Button label="Show participants" onClick={async()=>{
+                setShowParticipants(t=>!t);
+            }}/>
             <div>
                 <select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-40 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={(e)=>{
                     setLanguage(e.target.value);
@@ -49,6 +57,7 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
             }}/>
             <Button label="Leave contest" onClick={async()=>{
                 await leaveContest(code);
+                redirect('/dashboard');
             }}/>
         </div> 
         <div className="min-h-screen mx-10 grid grid-cols-2 gap-10">
@@ -59,6 +68,41 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
                     <div>
                         <p className="flex-nowrap">{question}</p>
                     </div>
+                    {showParticipants && <motion.div
+                        initial={{ x: 0, opacity: 0 }}   
+                        animate={{ x: 0, opacity: 1 }}  
+                        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                        className=" bg-gray-200 sticky  w-[700px] h-[700px] top-0 -mt-40 overflow-y-auto px-10 py-10 rounded-md border-4 border-black"
+                        >
+                        <div className="flex flex-col gap-5">
+                            <div className="flex justify-end">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={()=>{
+                                    setShowParticipants(t=>!t);
+                                }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                            <div className="text-3xl flex justify-center font-bold pb-10 underline">
+                                {"Contest Participants"}
+                            </div>
+                            <div className="flex flex-col">
+                                {participants?.map((p,idx)=>(
+                                    <div className="font-semibold text-xl flex gap-10" key={idx}>
+                                        <div>
+                                            {(idx+1)+" ."}
+                                        </div>
+                                        <div className="font-bold">
+                                            {p.name}
+                                        </div>
+                                        <div>
+                                            {/* Add email too */}
+                                        </div>
+                                    </div>
+                                ))}
+                                
+                            </div>
+                        </div>
+                      </motion.div>}
                 </div>
                 <textarea id="message" rows={4} className="block p-2.5 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-none" placeholder="Start writing your code from here" onChange={(e)=>{
                     setUserCode(e.target.value)
