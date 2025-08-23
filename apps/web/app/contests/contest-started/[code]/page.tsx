@@ -5,6 +5,7 @@ import { codeSubmit, fetchQuestion, getParticipants, leaveContest } from "../../
 import { Button } from "@repo/ui/button";
 import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
 export default function ContestStarted({params}:{params:Promise<{code:string}>})
 {
     const {code}=use(params);
@@ -14,6 +15,8 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
     const[userCode,setUserCode]=useState("");
     const[showParticipants,setShowParticipants]=useState(false);
     const [participants,setPariticipants]=useState<{name:string}[] | null>([]);
+    const [socket,setSocket]=useState<WebSocket| null>(null);
+    const session=useSession();
     enum CodeStatus{
         Accepted="Accepted",
         Wrong="Wrong",
@@ -24,6 +27,7 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
     useEffect(()=>{
         async function main()
         {
+            const userId=session?.data?.user?.id;
             const response=await fetchQuestion(code);
             const question=response.res?.problem[0]?.question;
             const title=response.res?.problem[0]?.title;
@@ -31,11 +35,32 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
             setTitle(title || "");
             const res=await getParticipants(code);
             setPariticipants(res?.participants || null);
+            if(!userId)return;
+            const socket=new WebSocket(`ws://localhost:8080?userId=${userId}&contestCode=${code}`);
+            socket.onopen=()=>{
+                socket.send(JSON.stringify({msg:"Hi there"}));
+            }
+            socket.onmessage=async(event)=>{
+                const res=JSON.parse(event.data);
+                console.log(JSON.stringify(res));
+                if(res.method==="submission")
+                {
+                    if(res.codeStatus==="wrong")setCodeStatus(CodeStatus.Wrong);
+                    else setCodeStatus(CodeStatus.Accepted);
+                }
+                if(res.method==="overall")
+                {
+                    await new Promise(r=>setTimeout(r,5000));
+                    console.log("USER HAS WON");
+                    // end the contest and declare the winner and show the winners name to every person attempting the contest
+                }
+            }
         }
         main();
     },[])
 
-    return <div className="mt-6 mb-10 h-screen w-screen sticky">
+    return (
+    <div className="mt-6 mb-10 h-screen w-screen sticky">
         <div className="flex justify-end items-center mb-5 pr-16 gap-16 w-full">
             <Button label="Show participants" onClick={async()=>{
                 setShowParticipants(t=>!t);
@@ -126,5 +151,6 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
                         </div>
                 </motion.div>}
         </div>  
-    </div>
+        {JSON.stringify(session) ||" hi there"}
+    </div>)
 }

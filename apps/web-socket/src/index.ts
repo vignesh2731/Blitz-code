@@ -23,5 +23,5 @@ wss.on('connection',(ws,req)=>{
             })
         }
     })
-    ws.send('Connected to ws server');
+    ws.send(JSON.stringify({msg:"Connected"}));
 })

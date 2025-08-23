@@ -32,11 +32,12 @@ export const authOption={
         },
         async jwt({user,token}:any)
         {
+            if(user)token.id=user.id;
             return token;
         },
-        async session({session,token}:any)
+        async session({session,token,user}:any)
         {
-            if(session && session.user)session.user.id=token.sub;
+            if(session && session.user)session.user.id=(token.id || user.id) as string ;
             return session;
         }
     },
