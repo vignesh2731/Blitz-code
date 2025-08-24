@@ -306,3 +306,21 @@ export async function codeSubmit(code:string,userCode:string,language:string)
     console.log(userCode);
     return {msg:"Submitted"};
 }
+
+export async function checkUser(creds:{email:string,password:string,name:string})
+{
+    const res=await prisma.user.findFirst({
+        where:{
+            email:creds.email
+        }
+    })
+    if(res)return true;
+    await prisma.user.create({
+        data:{
+            name:creds.name,
+            email:creds.email,
+            password:creds.password
+        }
+    })
+    return false;
+}

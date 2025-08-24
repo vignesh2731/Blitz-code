@@ -1,6 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import prisma from '@repo/db/client';
+import { signIn, signOut } from "next-auth/react";
 export const authOption={
     providers:[
         CredentialsProvider({
@@ -41,5 +42,9 @@ export const authOption={
             return session;
         }
     },
-    secret:process.env.NEXTAUTH_SECRET
+    pages:{
+        signIn: '/auth',
+        signOut:'/dashboard',
+    },
+    secret:process.env.NEXTAUTH_SECRET,
 }
