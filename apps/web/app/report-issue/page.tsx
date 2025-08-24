@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import InputBox from "../../components/InputBox";
+import InputBox from "@components/InputBox";
 
 export default function Report()
 {

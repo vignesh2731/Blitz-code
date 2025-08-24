@@ -1,4 +1,4 @@
-import { JoinContest } from "../../lib/lib";
+import { JoinContest } from "@lib/lib";
 
 export default async function Test()
 {

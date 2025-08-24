@@ -3,7 +3,7 @@
 import { useState } from "react";
 import InputBox from "../../components/InputBox"
 import { Button } from "@repo/ui/button";
-import { createContest } from "../../lib/lib";
+import { createContest } from "@lib/lib";
 import { useRouter } from "next/navigation";
 export default function CreateContest()
 {

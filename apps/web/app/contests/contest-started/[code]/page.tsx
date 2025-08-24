@@ -1,7 +1,7 @@
 "use client"
 
 import { use, useEffect, useState } from "react"
-import { codeSubmit, fetchQuestion, getParticipants, leaveContest } from "../../../../lib/lib";
+import { codeSubmit, fetchQuestion, getParticipants, leaveContest } from "@lib/lib";
 import { Button } from "@repo/ui/button";
 import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
@@ -36,23 +36,21 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
             const res=await getParticipants(code);
             setPariticipants(res?.participants || null);
             if(!userId)return;
-            const socket=new WebSocket(`ws://localhost:8080?userId=${userId}&contestCode=${code}`);
-            socket.onopen=()=>{
-                socket.send(JSON.stringify({msg:"Hi there"}));
-            }
-            socket.onmessage=async(event)=>{
+            const ws=new WebSocket(`ws://localhost:8080?userId=${userId}&contestCode=${code}`);
+            setSocket(ws);
+            ws.onopen = () => console.log("WebSocket connected");
+            ws.onmessage=async(event)=>{
                 const res=JSON.parse(event.data);
-                console.log(JSON.stringify(res));
                 if(res.method==="submission")
                 {
-                    if(res.codeStatus==="wrong")setCodeStatus(CodeStatus.Wrong);
-                    else setCodeStatus(CodeStatus.Accepted);
+                    if(res.codeStatus==="Wrong")setCodeStatus(CodeStatus.Wrong);
+                    else if(res.codeStatus==="Accepted") setCodeStatus(CodeStatus.Accepted);
                 }
                 if(res.method==="overall")
                 {
-                    await new Promise(r=>setTimeout(r,5000));
                     console.log("USER HAS WON");
-                    // end the contest and declare the winner and show the winners name to every person attempting the contest
+                    await new Promise(r=>setTimeout(r,5000));
+                    redirect(`/contests/winner/${code}`)
                 }
             }
         }
@@ -151,6 +149,6 @@ export default function ContestStarted({params}:{params:Promise<{code:string}>})
                         </div>
                 </motion.div>}
         </div>  
-        {JSON.stringify(session) ||" hi there"}
+        {codeStatus}
     </div>)
 }

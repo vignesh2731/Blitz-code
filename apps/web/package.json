@@ -12,13 +12,15 @@
   },
   "dependencies": {
     "@repo/db": "*",
+    "@repo/redis": "*",
     "@repo/ui": "*",
-    "@repo/redis":"*",
     "framer-motion": "^12.23.9",
     "next": "^15.4.2",
     "next-auth": "^4.24.11",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-confetti": "^6.4.0",
+    "react-dom": "^19.1.0",
+    "react-use": "^17.6.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

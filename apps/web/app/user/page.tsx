@@ -1,9 +1,9 @@
 "use client"
-import InputBox from "../../components/InputBox";
+import InputBox from "@components/InputBox";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@repo/ui/button";
-import { updateUserData } from "../../lib/lib";
+import { updateUserData } from "@lib/lib";
 import { redirect } from "next/navigation";
 
 

@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { fetchContestData } from "../../lib/lib";
-import { ContestsResult } from "../../components/ContestsResult";
+import { fetchContestData } from "@lib/lib";
+import { ContestsResult } from "@components/ContestsResult";
 
 export default function CheckResult()
 {

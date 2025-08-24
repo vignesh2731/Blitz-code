@@ -16,7 +16,7 @@ wss.on('connection',(ws,req)=>{
     ws.on('message',(data)=>{
         const req=JSON.parse(data.toString());
         user_ws.get(userId)?.send(JSON.stringify({method:"submission",codeStatus:req.codeStatus}));
-        if(req.codeStatus===true)
+        if(req.codeStatus==="Accepted")
         {
             contest_room.get(contestCode)?.forEach((cc)=>{
                 cc.send(JSON.stringify({method:"overall",winner:userId}));
