@@ -2,6 +2,7 @@
 import prisma from '@repo/db/client'
 import { getServerSession } from 'next-auth';
 import { authOption } from './auth';
+import  RedisSingleton  from '@repo/redis/client'
 export async function JoinContest(code:string,password:string)
 {
     const session=await getServerSession(authOption);
@@ -303,7 +304,10 @@ export async function codeSubmit(code:string,userCode:string,language:string)
 {
     const session=await getServerSession(authOption);
     // push the code to a redis queue and a vm picks it from the queue executes it and cross checks the testcases
-    console.log(userCode);
+    const client = await RedisSingleton.getInstance();
+    await client.lPush('RedisQueue',JSON.stringify({code:code,userCode:userCode,language:language}));
+    const item=await client.rPop("RedisQueue");
+    // console.log("This item is from the queue "+item);
     return {msg:"Submitted"};
 }
 

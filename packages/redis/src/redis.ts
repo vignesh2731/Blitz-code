@@ -4,14 +4,16 @@ class RedisSingleton{
     private static instance: RedisClientType | null=null;
     private client:RedisClientType | null = null;
     
-    private constructor()
-    {
-        this.client=createClient();
-        this.client.connect();
-        RedisSingleton.instance=this.client;
-    }
-    static getInstance(){
-        if(!RedisSingleton.instance)new RedisSingleton();
+    private constructor(){}
+    static async getInstance():Promise<RedisClientType>{
+        if(!RedisSingleton.instance)
+        {
+            const client: RedisClientType = createClient({
+                url: 'redis://localhost:6379'
+            })
+            await client.connect();
+            RedisSingleton.instance=client;
+        }
         return RedisSingleton.instance;
     }
 }
